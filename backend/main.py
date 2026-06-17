@@ -165,6 +165,62 @@ def submit_resource(submission: dict):
     return {"message": "提交成功，等待审核"}
 
 
+# ==================== 批量导入 ====================
+
+@app.post("/api/admin/import")
+def admin_import_resources(data: dict):
+    """批量导入资源（JSON数组）"""
+    items = data.get("items", [])
+    if not items or not isinstance(items, list):
+        raise HTTPException(400, "请提供items数组")
+
+    import json, os
+    db = next(get_db())
+    count = 0
+    for item in items:
+        title = item.get("title", "").strip()
+        link = item.get("link", "").strip()
+        if not title or not link:
+            continue
+        # 去重
+        exists = db.query(Resource).filter(Resource.title == title).first()
+        if exists:
+            continue
+        r = Resource(
+            title=title,
+            category=item.get("category", "短剧"),
+            description=item.get("description", ""),
+            source=item.get("source", "夸克网盘"),
+            link=link,
+            episodes=item.get("episodes", ""),
+            actors=item.get("actors", ""),
+            is_hot=item.get("is_hot", False),
+            click_count=item.get("click_count", 0),
+        )
+        db.add(r)
+        count += 1
+    db.commit()
+    db.close()
+    return {"message": f"导入成功，新增 {count} 条", "count": count}
+
+
+@app.get("/api/admin/stats")
+def admin_stats():
+    """管理后台 - 统计信息"""
+    db = next(get_db())
+    total = db.query(Resource).count()
+    active = db.query(Resource).filter(Resource.status == "active").count()
+    hot = db.query(Resource).filter(Resource.is_hot == True).count()
+    pending_sub = db.query(Submission).filter(Submission.status == "pending").count()
+    db.close()
+    return {
+        "total_resources": total,
+        "active_resources": active,
+        "hot_resources": hot,
+        "pending_submissions": pending_sub,
+    }
+
+
 # ==================== 管理后台API ====================
 
 @app.get("/api/admin/resources")
