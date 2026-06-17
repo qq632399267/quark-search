@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import naive from 'naive-ui'
 import App from './App.vue'
 
@@ -18,7 +18,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory('/quark-search/'),
+  history: createWebHashHistory(),
   routes,
 })
 
