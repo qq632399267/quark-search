@@ -3,7 +3,16 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   base: '/quark-search/',
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    {
+      name: 'remove-crossorigin',
+      enforce: 'post',
+      transformIndexHtml(html) {
+        return html.replace(/ crossorigin/g, '')
+      },
+    },
+  ],
   server: {
     port: 3000,
     proxy: {
@@ -15,5 +24,6 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+    crossorigin: false,
   },
 })

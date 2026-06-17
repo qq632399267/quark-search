@@ -2,7 +2,13 @@
   <div class="admin-page">
     <n-card title="🔧 管理后台">
       <template #header-extra>
-        <n-button type="primary" size="small" @click="showAddModal = true">+ 添加资源</n-button>
+        <n-space>
+          <n-button size="small" @click="handleExport">📤 导出数据</n-button>
+          <n-upload :default-upload="false" :show-file-list="false" @change="handleImport">
+            <n-button size="small">📥 导入数据</n-button>
+          </n-upload>
+          <n-button type="primary" size="small" @click="showAddModal = true">+ 添加资源</n-button>
+        </n-space>
       </template>
 
       <n-tabs v-model:value="tabValue" @update:value="loadData">
@@ -81,6 +87,7 @@ import { useMessage, useDialog } from 'naive-ui'
 import {
   adminListResources, adminAddResource, adminDeleteResource,
   adminListSubmissions, adminApproveSubmission, adminRejectSubmission,
+  exportData, importData,
 } from '../api/index.js'
 
 const message = useMessage()
@@ -212,6 +219,26 @@ async function reject(id) {
     message.success('已驳回')
     loadSubmissions()
   } catch { message.error('操作失败') }
+}
+
+function handleExport() {
+  exportData()
+  message.success('数据已导出')
+}
+
+function handleImport({ file }) {
+  if (!file?.file) return
+  const reader = new FileReader()
+  reader.onload = async (e) => {
+    try {
+      const count = importData(e.target.result)
+      message.success(`成功导入 ${count} 条数据`)
+      loadResources()
+    } catch (err) {
+      message.error('导入失败: ' + err.message)
+    }
+  }
+  reader.readAsText(file.file)
 }
 
 onMounted(loadResources)
