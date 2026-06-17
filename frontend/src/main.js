@@ -8,8 +8,6 @@ import SearchPage from './pages/SearchPage.vue'
 import DetailPage from './pages/DetailPage.vue'
 import SubmitPage from './pages/SubmitPage.vue'
 import AdminPage from './pages/AdminPage.vue'
-import FavoritesPage from './pages/FavoritesPage.vue'
-import CollectionsPage from './pages/CollectionsPage.vue'
 
 const routes = [
   { path: '/', component: HomePage },
@@ -17,8 +15,6 @@ const routes = [
   { path: '/d/:id(\\d+)', component: DetailPage, props: true },
   { path: '/submit', component: SubmitPage },
   { path: '/admin', component: AdminPage },
-  { path: '/favorites', component: FavoritesPage },
-  { path: '/collections', component: CollectionsPage },
 ]
 
 const router = createRouter({
