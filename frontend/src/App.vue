@@ -1,5 +1,6 @@
 <template>
   <n-message-provider>
+    <n-dialog-provider>
     <n-config-provider :theme-overrides="themeOverrides" :locale="zhCN" :date-locale="dateZhCN">
       <div class="app-container">
         <!-- 顶部导航 -->
@@ -39,6 +40,7 @@
         </n-layout-footer>
       </div>
     </n-config-provider>
+    </n-dialog-provider>
   </n-message-provider>
 </template>
 
